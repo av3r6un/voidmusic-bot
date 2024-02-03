@@ -23,7 +23,7 @@ class FileInfo:
 
 class CurrentSession:
   opened: int = None
-  closed: int | None = None
+  closed: int = None
   files: list[FileInfo] = []
 
   def __init__(self, filepath) -> None:

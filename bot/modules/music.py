@@ -10,6 +10,7 @@ class VoidMusic:
     self.settings = config
     self.highest_abr = ''
     self.yt = YouTube(link)
+    self.yid = self.yt.video_id
     self.title = self.yt.title
 
   def download(self):
@@ -63,4 +64,4 @@ class VoidMusic:
 
   @property
   def info(self):
-    return {'yid': self.yt.video_id, 'filename': self.filename}
+    return {'yid': self.yid, 'filename': self.filename}

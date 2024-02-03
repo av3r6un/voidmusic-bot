@@ -40,17 +40,21 @@ async def searcher(m: Message) -> None:
     await m.chat.do('typing')
     logger.info(f'Received download request from user: {m.from_user.id}')
     music = VoidMusic(m.text, logger, settings)
-    start_message = await m.answer(f'Начало скачивания {music.title}', reply_markup=ReplyKeyboardRemove())
-    try:
-      await m.chat.do('upload_document')
-      path = music.download()
-      await start_message.delete()
-      document_message = await m.answer_document(document=FSInputFile(path))
-      mStorage.new_item(music.info | {'uid': document_message.document.file_unique_id, 'receiver': m.from_user.id})
-      activeTube = False
-      music.delete_latest()
-    except DownloadError as err:
-      await m.answer(text=err.message)
+    already_downloaded = mStorage.session[music.yid]
+    if not already_downloaded:
+      start_message = await m.answer(f'Начало скачивания {music.title}', reply_markup=ReplyKeyboardRemove())
+      try:
+        await m.chat.do('upload_document')
+        path = music.download()
+        await start_message.delete()
+        document_message = await m.answer_document(document=FSInputFile(path))
+        mStorage.new_item(music.info | {'uid': document_message.document.file_unique_id, 'receiver': m.from_user.id})
+        activeTube = False
+        music.delete_latest()
+      except DownloadError as err:
+        await m.answer(text=err.message)
+    else:
+      m.answer_document(document=already_downloaded.uid)
   else:
     await m.answer(f'Не выбрана команда. Выберите, пожалуйста, команду:', reply_markup=ReplyKeyboardMarkup(keyboard=[[buttons.DOWNLOAD]], resize_keyboard=True))
 

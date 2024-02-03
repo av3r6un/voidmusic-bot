@@ -64,7 +64,6 @@ async def searcher(m: Message) -> None:
 async def on_startup(bot: Bot) -> None:
   await bot.set_webhook(
     f'{settings.BASE_WEBHOOK_URL}{settings.WEBHOOK_PATH}',
-    certificate=FSInputFile(settings.WEBHOOK_SSL_CERT),
     secret_token=settings.WEBHOOK_SECRET,
   )
 

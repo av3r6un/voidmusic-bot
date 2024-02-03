@@ -89,7 +89,7 @@ def main() -> None:
   context = ssl._create_unverified_context()
 
   logger.info('Starting app..')
-  web.run_app(app, host=settings.WEB_SERVER_HOST, port=settings.WEB_SERVER_PORT, context=context)
+  web.run_app(app, host=settings.WEB_SERVER_HOST, port=settings.WEB_SERVER_PORT, ssl_context=context)
 
 
 if __name__ == '__main__':

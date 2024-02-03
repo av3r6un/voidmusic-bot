@@ -65,7 +65,7 @@ class MusicStorage:
 
   def __init__(self, filepath):
     self.session = CurrentSession(filepath)
-    self.length = len(self.session.files)
+    self.length = len(self.session.files) if self.session.files else 0
 
   def new_item(self, fileinfo: dict):
     self.session.files.append(FileInfo(**fileinfo))

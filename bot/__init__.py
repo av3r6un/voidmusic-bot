@@ -17,6 +17,7 @@ settings = Settings()
 buttons = Buttons(settings.BUTTONS)
 logger = Logger(settings.LOG_FILENAME, settings.DATE_FMT, settings.LOG_FMT)
 mStorage = MusicStorage(settings.MS_FILEPATH)
+print(mStorage.session.files)
 
 @router.message(CommandStart())
 async def start_handler(m: Message) -> None:

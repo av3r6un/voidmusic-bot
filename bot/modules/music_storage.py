@@ -49,6 +49,7 @@ class CurrentSession:
     self._dump_storage()
 
   def __getitem__(self, __file):
+    print(self.files)
     if not self.files:
       return None
     for file in self.files:

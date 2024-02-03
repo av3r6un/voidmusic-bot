@@ -29,6 +29,7 @@ class CurrentSession:
   def __init__(self, filepath) -> None:
     self.filepath = filepath
     self.opened = time()
+    self._load_storage()
 
   def _load_storage(self):
     with open(self.filepath, 'r', encoding='utf-8') as file:

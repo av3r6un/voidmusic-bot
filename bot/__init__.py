@@ -9,6 +9,9 @@ from .config import Settings
 from aiohttp import web
 
 
+activeTube = False
+
+
 router = Router()
 settings = Settings()
 buttons = Buttons(settings.BUTTONS)

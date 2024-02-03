@@ -1,11 +1,12 @@
 from aiogram.types import FSInputFile, Message, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from .modules import VoidMusic, Buttons, Logger, MusicStorage
 from .modules import LinkFilter, CommandFilter, CommandStart
 from aiogram import Bot, Dispatcher, Router
 from .exceptions import DownloadError
 from aiogram.enums import ParseMode
 from .config import Settings
-import asyncio
+from aiohttp import web
 
 
 router = Router()
@@ -59,21 +60,31 @@ async def searcher(m: Message) -> None:
 async def on_shutdown(bot: Bot) -> None:
   mStorage.close_()
 
+async def on_startup(bot: Bot) -> None:
+  await bot.set_webhook(
+    f'{settings.BASE_WEBHOOK_URL}{settings.WEBHOO_PATH}',
+    secret_token=settings.WEBHOOK_SECRET,
+  )
 
-async def _main() -> None:
+def main() -> None:
   dp = Dispatcher()
   dp.include_router(router)
 
+  dp.startup.register(on_startup)
   dp.shutdown.register(on_shutdown)
   bot = Bot(settings.TOKEN, parse_mode=ParseMode.HTML)
 
-  await dp.start_polling(bot)
+  app = web.Application()
+  webhook_req_handler = SimpleRequestHandler(
+    dp, bot, secret_token=settings.WEBHOOK_SECRET
+  )
+  webhook_req_handler.register(app, path=settings.WEBHOO_PATH)
+
+  setup_application(app, dp, bot=bot)
 
   logger.info('Starting app..')
 
-
-def main() -> None:
-  asyncio.run(_main())
+  web.run_app(app, host=settings.WEB_SERVER_HOST, port=settings.WEB_SERVER_PORT)
 
 
 if __name__ == '__main__':

@@ -27,7 +27,7 @@ class VoidMusic:
   def _get_highest_abr(self):
     br = [br.abr for br in self.yt.streams.filter(only_audio=True)]
     i = max([i for i, br in enumerate(br)])
-    self._abr = br[i]
+    self._abr = int(br[i].replace('kbps', ''))
     return br[i]
   
   def _allowed_filename(self, title):

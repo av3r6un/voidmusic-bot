@@ -62,7 +62,7 @@ async def on_shutdown(bot: Bot) -> None:
 
 async def on_startup(bot: Bot) -> None:
   await bot.set_webhook(
-    f'{settings.BASE_WEBHOOK_URL}{settings.WEBHOO_PATH}',
+    f'{settings.BASE_WEBHOOK_URL}{settings.WEBHOOK_PATH}',
     secret_token=settings.WEBHOOK_SECRET,
   )
 
@@ -78,7 +78,7 @@ def main() -> None:
   webhook_req_handler = SimpleRequestHandler(
     dp, bot, secret_token=settings.WEBHOOK_SECRET
   )
-  webhook_req_handler.register(app, path=settings.WEBHOO_PATH)
+  webhook_req_handler.register(app, path=settings.WEBHOOK_PATH)
 
   setup_application(app, dp, bot=bot)
 

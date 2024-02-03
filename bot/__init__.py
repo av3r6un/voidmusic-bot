@@ -67,6 +67,10 @@ async def on_startup(bot: Bot) -> None:
     secret_token=settings.WEBHOOK_SECRET,
   )
 
+async def on_shutdown(bot: Bot) -> None:
+  mStorage.close_()
+
+
 def main() -> None:
   dp = Dispatcher()
   dp.include_router(router)
@@ -88,7 +92,8 @@ def main() -> None:
   logger.info('Starting app..')
   web.run_app(app, host=settings.WEB_SERVER_HOST, port=settings.WEB_SERVER_PORT, ssl_context=context)
   logging.basicConfig(filename=settings.AIOGRAM_LOG, filemode='w', level=logging.INFO, encoding='utf-8')
-  app.on_shutdown(mStorage.close)
+
+  dp.shutdown.register(on_shutdown)
 
 if __name__ == '__main__':
   main()

@@ -1,8 +1,9 @@
 from aiogram.types import FSInputFile, Message, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
+from .modules import VoidMusic, Buttons, Logger, MusicStorage
 from .modules import LinkFilter, CommandFilter, CommandStart
-from .modules import VoidMusic, Buttons, Logger
 from aiogram import Bot, Dispatcher, Router
+from .exceptions import DownloadError
 from aiogram.enums import ParseMode
 from .config import Settings
 from aiohttp import web
@@ -13,7 +14,7 @@ router = Router()
 settings = Settings()
 buttons = Buttons(settings.BUTTONS)
 logger = Logger(settings.LOG_FILENAME, settings.DATE_FMT, settings.LOG_FMT)
-
+mStorage = MusicStorage(settings.MS_FILEPATH)
 
 @router.message(CommandStart())
 async def start_handler(m: Message) -> None:
@@ -34,18 +35,24 @@ async def cancel_handler(m: Message) -> None:
 
 @router.message(LinkFilter())
 async def searcher(m: Message) -> None:
+  global activeTube
   if activeTube:
     await m.chat.do('typing')
-    music = VoidMusic(m.text, logger)
+    logger.info(f'Received download request from user: {m.from_user.id}')
+    music = VoidMusic(m.text, logger, settings)
     start_message = await m.answer(f'Начало скачивания {music.title}', reply_markup=ReplyKeyboardRemove())
-    await m.chat.do('upload_document')
-    path = music.download()
-    await start_message.delete()
-    await m.answer_document(document=FSInputFile(path))
-    global activeTube
-    activeTube = False
+    try:
+      await m.chat.do('upload_document')
+      path = music.download()
+      await start_message.delete()
+      document_message = await m.answer_document(document=FSInputFile(path))
+      mStorage.new_item(music.info | {'uid': document_message.document.file_unique_id, 'receiver': m.from_user.id})
+      activeTube = False
+      music.delete_latest()
+    except DownloadError as err:
+      await m.answer(text=err.message)
   else:
-    await m.answer(f'Не выбрана команда. Выберите, пожалуйста, команду:', reply_markup=ReplyKeyboardMarkup(keyboard=[[buttons.BUTTON_DOWNLOAD]], resize_keyboard=True))
+    await m.answer(f'Не выбрана команда. Выберите, пожалуйста, команду:', reply_markup=ReplyKeyboardMarkup(keyboard=[[buttons.DOWNLOAD]], resize_keyboard=True))
 
 
 async def on_startup(bot: Bot) -> None:
@@ -75,7 +82,7 @@ def main() -> None:
 
   logger.info('Starting app..')
   web.run_app(app, host=settings.WEB_SERVER_HOST, port=settings.WEB_SERVER_PORT, ssl_context=context)
-
+  app.on_shutdown(mStorage.close)
 
 if __name__ == '__main__':
   main()

@@ -1,0 +1,4 @@
+download:
+  filesize:
+    too_large: 'Исходный файл слишком большой. <blockquote>Отправлять через телеграм возможно файлы менее 50 Мб.\n10 MB max size for photos, 50 MB for other files.</blockquote>'
+    

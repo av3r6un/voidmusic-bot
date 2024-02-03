@@ -8,3 +8,5 @@ BASE_WEBHOOK_URL: 'https://bot.voidspace.ru'
 LOG_FILENAME: ''
 DATE_FMT: '%Y-%m-%d %H:%M:%S'
 LOG_FMT: '{time} [{level}] {message}'
+BANNED_CHAR: [':', "'", '?', '...', '/', '\', '|', '®', '•', '.']
+MS_FILEPATH: ''

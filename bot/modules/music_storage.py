@@ -34,8 +34,9 @@ class CurrentSession:
   def _load_storage(self):
     with open(self.filepath, 'r', encoding='utf-8') as file:
       data = yaml.safe_load(file)
-    for file in data:
-      self.files.append(FileInfo(**file))
+    if data:
+      for file in data:
+        self.files.append(FileInfo(**file))
 
   def _dump_storage(self):
     storage = {file.json for file in self.files}

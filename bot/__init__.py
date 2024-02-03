@@ -1,15 +1,11 @@
 from aiogram.types import FSInputFile, Message, ReplyKeyboardMarkup, ReplyKeyboardRemove
-from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from .modules import VoidMusic, Buttons, Logger, MusicStorage
 from .modules import LinkFilter, CommandFilter, CommandStart
 from aiogram import Bot, Dispatcher, Router
 from .exceptions import DownloadError
 from aiogram.enums import ParseMode
 from .config import Settings
-from aiohttp import web
-import logging
-import ssl
-import sys
+import asyncio
 
 
 router = Router()
@@ -60,37 +56,24 @@ async def searcher(m: Message) -> None:
   else:
     await m.answer(f'Не выбрана команда. Выберите, пожалуйста, команду:', reply_markup=ReplyKeyboardMarkup(keyboard=[[buttons.DOWNLOAD]], resize_keyboard=True))
 
-
-async def on_startup(bot: Bot) -> None:
-  await bot.set_webhook(
-    f'{settings.BASE_WEBHOOK_URL}{settings.WEBHOOK_PATH}',
-    secret_token=settings.WEBHOOK_SECRET,
-  )
-
 async def on_shutdown(bot: Bot) -> None:
   mStorage.close_()
 
 
-def main() -> None:
+async def _main() -> None:
   dp = Dispatcher()
   dp.include_router(router)
 
-  dp.startup.register(on_startup)
   dp.shutdown.register(on_shutdown)
   bot = Bot(settings.TOKEN, parse_mode=ParseMode.HTML)
 
-  app = web.Application()
-  webhook_req_handler = SimpleRequestHandler(
-    dispatcher=dp, bot=bot, secret_token=settings.WEBHOOK_SECRET
-  )
-  webhook_req_handler.register(app, path=settings.WEBHOOK_PATH)
-
-  setup_application(app, dp, bot=bot)
-  context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-  context.load_cert_chain(settings.WEBHOOK_SSL_CERT, settings.WEBHOOK_SSL_PRIV)
+  await dp.start_polling(bot)
 
   logger.info('Starting app..')
-  web.run_app(app, host=settings.WEB_SERVER_HOST, port=settings.WEB_SERVER_PORT, ssl_context=context)
+
+
+def main() -> None:
+  asyncio.run(_main())
 
 
 if __name__ == '__main__':

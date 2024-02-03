@@ -7,7 +7,9 @@ from .exceptions import DownloadError
 from aiogram.enums import ParseMode
 from .config import Settings
 from aiohttp import web
+import logging
 import ssl
+import sys
 
 
 router = Router()
@@ -85,6 +87,7 @@ def main() -> None:
 
   logger.info('Starting app..')
   web.run_app(app, host=settings.WEB_SERVER_HOST, port=settings.WEB_SERVER_PORT) #  ssl_context=context
+  logging.basicConfig(filename=settings.AIOGRAM_LOG, filemode='w', level=logging.INFO, encoding='utf-8', stream=sys.stdout)
   app.on_shutdown(mStorage.close)
 
 if __name__ == '__main__':

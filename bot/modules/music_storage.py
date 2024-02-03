@@ -24,7 +24,7 @@ class FileInfo:
 class CurrentSession:
   opened: int = None
   closed: int | None = None
-  files: list[FileInfo] = None
+  files: list[FileInfo] = []
 
   def __init__(self, filepath) -> None:
     self.filepath = filepath

@@ -76,6 +76,7 @@ def main() -> None:
   dp.include_router(router)
 
   dp.startup.register(on_startup)
+  dp.shutdown.register(on_shutdown)
   bot = Bot(settings.TOKEN, parse_mode=ParseMode.HTML)
 
   app = web.Application()
@@ -91,9 +92,7 @@ def main() -> None:
 
   logger.info('Starting app..')
   web.run_app(app, host=settings.WEB_SERVER_HOST, port=settings.WEB_SERVER_PORT, ssl_context=context)
-  logging.basicConfig(filename=settings.AIOGRAM_LOG, filemode='w', level=logging.INFO, encoding='utf-8')
 
-  dp.shutdown.register(on_shutdown)
-
+  
 if __name__ == '__main__':
   main()

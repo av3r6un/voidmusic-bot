@@ -72,7 +72,7 @@ class MusicStorage:
     self.session.dump()
     self.session.renew()
 
-  def close(self):
+  def close_(self):
     self.session.dump()
 
   def __exit__(self):

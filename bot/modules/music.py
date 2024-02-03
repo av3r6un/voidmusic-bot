@@ -31,7 +31,7 @@ class VoidMusic:
     return br[i]
   
   def _allowed_filename(self, title):
-    repl = {' ': '_'} | {k: '' for k in self.settings.BANNED_WORDS}
+    repl = {' ': '_'} | {k: '' for k in self.settings.BANNED_CHARS}
     return ''.join(repl.get(c, c) for c in title).strip('_')
   
   def _is_worth_downloading(self):

@@ -39,7 +39,7 @@ class CurrentSession:
 
   def _dump_storage(self):
     if self.files:
-      storage = {file.json for file in self.files}
+      storage = [file.json for file in self.files]
       with open(self.filepath, 'w', encoding='utf-8') as file:
         yaml.safe_dump(storage, file)
       return True

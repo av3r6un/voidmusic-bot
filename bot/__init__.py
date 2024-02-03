@@ -86,8 +86,8 @@ def main() -> None:
   context.load_cert_chain(settings.WEBHOOK_SSL_CERT, settings.WEBHOOK_SSL_PRIV)
 
   logger.info('Starting app..')
-  web.run_app(app, host=settings.WEB_SERVER_HOST, port=settings.WEB_SERVER_PORT) #  ssl_context=context
-  logging.basicConfig(filename=settings.AIOGRAM_LOG, filemode='w', level=logging.INFO, encoding='utf-8', stream=sys.stdout)
+  web.run_app(app, host=settings.WEB_SERVER_HOST, port=settings.WEB_SERVER_PORT, ssl_context=context)
+  logging.basicConfig(filename=settings.AIOGRAM_LOG, filemode='w', level=logging.INFO, encoding='utf-8')
   app.on_shutdown(mStorage.close)
 
 if __name__ == '__main__':

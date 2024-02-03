@@ -57,7 +57,8 @@ async def searcher(m: Message) -> None:
       except DownloadError as err:
         await m.answer(text=err.message)
     else:
-      m.answer_document(document=already_downloaded.uid)
+      await m.chat.do('upload_document')
+      await m.answer_document(document=already_downloaded.uid)
   else:
     await m.answer(f'Не выбрана команда. Выберите, пожалуйста, команду:', reply_markup=ReplyKeyboardMarkup(keyboard=[[buttons.DOWNLOAD]], resize_keyboard=True))
 

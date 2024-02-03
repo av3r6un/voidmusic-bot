@@ -47,7 +47,7 @@ async def searcher(m: Message) -> None:
         path = music.download()
         await start_message.delete()
         document_message = await m.answer_document(document=FSInputFile(path))
-        mStorage.new_item(music.info | {'uid': document_message.document.file_id, 'receiver': m.from_user.id})
+        mStorage.new_item(music.info | {'uid': document_message.audio.file_id, 'receiver': m.from_user.id})
         activeTube = False
         music.delete_latest()
       except DownloadError as err:

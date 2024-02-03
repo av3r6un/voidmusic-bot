@@ -14,7 +14,7 @@ class FileInfo:
     self.yid = yid
     self.receiver = receiver
     self.filename = filename
-    self.sent = sent if sent else time()
+    self.sent = sent if sent else int(time())
   
   @property
   def json(self):
@@ -57,7 +57,7 @@ class CurrentSession:
   
   def renew(self):
     self.closed = None
-    self.opened = time()
+    self.opened = int(time())
     self.files = self._load_storage()
 
 

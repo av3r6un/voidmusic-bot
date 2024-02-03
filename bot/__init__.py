@@ -87,7 +87,8 @@ def main() -> None:
   webhook_req_handler.register(app, path=settings.WEBHOOK_PATH)
 
   setup_application(app, dp, bot=bot)
-  context = ssl._create_unverified_context()
+  context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+  context.load_cert_chain(settings.WEBHOOK_SSL_CERT, settings.WEBHOOK_SSL_PRIV)
 
   logger.info('Starting app..')
   web.run_app(app, host=settings.WEB_SERVER_HOST, port=settings.WEB_SERVER_PORT, ssl_context=context)

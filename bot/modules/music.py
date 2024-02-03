@@ -57,7 +57,7 @@ class VoidMusic:
     except Exception as ex:
       self.logger.error(f'Conversion into MP3 format failed. Traceback: {str(ex)}')
     finally:
-      os.remove(f'{self.settings.STORAGE}{self.filename}.wav')
+      os.remove(f'{self.settings.STORAGE}/{self.filename}.wav')
   
   def delete_latest(self):
     os.remove(self.latest)

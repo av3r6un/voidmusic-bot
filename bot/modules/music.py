@@ -19,7 +19,7 @@ class VoidMusic:
     self.filename = f'{self._allowed_filename(author)}-{self._allowed_filename(song.title)}'
     if not self._is_worth_downloading():
       raise DownloadError('filesize', 'too_large')
-    song.download(filename=f'{self.filename}.wav')
+    song.download(output_path=self.settings.STORAGE, filename=f'{self.filename}.wav')
     self.logger.info(f'Downloaded {self.filename} with abr: {self.highest_abr}')
     path = self._convert()
     return path  
